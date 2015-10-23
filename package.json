@@ -1,0 +1,36 @@
+{
+  "name": "obj-exporter",
+  "version": "0.0.0",
+  "description": "Export face-vertex and polygon meshes to the OBJ format",
+  "main": "build/index.js",
+  "bin": "cli/index.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "buffer-converter": "^1.0.0",
+    "js-yaml": "^3.4.3"
+  },
+  "devDependencies": {
+    "babel": "^5.8.23"
+  },
+  "scripts": {
+    "test": "babel-node test/index.js",
+    "build": "babel -d build source",
+    "prepublish": "npm run build && npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adius/obj-exporter.git"
+  },
+  "keywords": [
+    "OBJ",
+    "mesh"
+  ],
+  "author": "Adrian Sieber",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/adius/obj-exporter/issues"
+  },
+  "homepage": "https://github.com/adius/obj-exporter#readme"
+}
