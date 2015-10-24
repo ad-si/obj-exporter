@@ -1,12 +1,17 @@
 import fs from 'fs'
 import path from 'path'
 
-import ObjTransformer from '../source/index'
+import Json2obj from '../source/index'
 import Yaml2json from '../source/yaml2json'
 
+let yaml2json = new Yaml2json
+let json2obj = new Json2obj({readableObjectMode: false})
+
+yaml2json.on('error', console.error)
+json2obj.on('error', console.error)
 
 fs
 	.createReadStream(path.join(__dirname, 'tetrahedron.yaml'))
-	.pipe(new Yaml2json)
-	.pipe(new ObjTransformer)
+	.pipe(yaml2json)
+	.pipe(json2obj)
 	.pipe(process.stdout)
