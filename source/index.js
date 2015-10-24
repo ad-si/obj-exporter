@@ -14,25 +14,56 @@ export default class Json2obj extends stream.Transform {
 	) {
 		super({writableObjectMode, readableObjectMode})
 
-		this.vertices = new Set
-		this.textureCoordinates = new Set
-		this.vertexNormals = new Set
-		this.parameterVertices = new Set
-		this.faces = new Set
-	}
-
-	_flush (done) {
-		done()
+		this.vertexMap = new Map
+		this.textureCoordinateSet = new Set
+		this.vertexNormalSet = new Set
+		this.parameterVerticeSet = new Set
+		this.faceSet = new Set
 	}
 
 	_transform (chunk, encoding, done) {
 
-		if (this.writableObjectMode){
-			this.vertices.add chunk.vertices.add
+		let face = this.writableObjectMode ? chunk : JSON.parse(chunk)
+
+		this.faceSet.add(face.vertices.map(
+			vertex => {
+
+				let vertexString = JSON.stringify(vertex)
+
+				if (this.vertexMap.has(vertexString)) {
+					return this.vertexMap.get(vertexString)
+				}
+				else {
+					let vertexMapSize = this.vertexMap.size + 1
+					this.vertexMap.set(vertexString, vertexMapSize)
+					return vertexMapSize
+				}
+
+				this.vertexSet.add()
+			}
+		))
+
+		done()
+	}
+
+	_flush (done) {
+
+		this.push('o Solid Object\n\n')
+
+		for (let vertexString of this.vertexMap.keys()) {
+			//console.log('hjkl',vertexString)
+			let vertex = JSON.parse(vertexString)
+			this.push(`v ${vertex.x} ${vertex.y} ${vertex.z}\n`)
 		}
 
-		this.push(chunk.toStrin
-		this.push('\n')
+		this.push(
+			'\nf ' +
+			[...this.faceSet]
+				.map(face => face.join(' '))
+				.join('\nf ') +
+			'\n'
+		)
+
 		done()
 	}
 }
