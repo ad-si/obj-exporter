@@ -44,7 +44,7 @@ export default function convert () {
 		process.stdin.setEncoding('utf-8')
 
 		process.stdin
-			.pipe(new TransformStream())
+			.pipe(new TransformStream({readableObjectMode: false}))
 			.pipe(process.stdout)
 	}
 }

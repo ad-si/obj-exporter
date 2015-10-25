@@ -14,6 +14,8 @@ export default class Json2obj extends stream.Transform {
 	) {
 		super({writableObjectMode, readableObjectMode})
 
+		this.internalBuffer = []
+
 		this.vertexMap = new Map
 		this.textureCoordinateSet = new Set
 		this.vertexNormalSet = new Set
@@ -23,25 +25,53 @@ export default class Json2obj extends stream.Transform {
 
 	_transform (chunk, encoding, done) {
 
-		let face = this.writableObjectMode ? chunk : JSON.parse(chunk)
+		var jsonEvent
 
-		this.faceSet.add(face.vertices.map(
-			vertex => {
+		let mergeVertices = (jsonEvent) => {
 
-				let vertexString = JSON.stringify(vertex)
+			this.faceSet.add(jsonEvent.vertices.map(
+				vertex => {
 
-				if (this.vertexMap.has(vertexString)) {
-					return this.vertexMap.get(vertexString)
+					let vertexString = JSON.stringify(vertex)
+
+					if (this.vertexMap.has(vertexString)) {
+						return this.vertexMap.get(vertexString)
+					}
+					else {
+						let vertexMapSize = this.vertexMap.size + 1
+						this.vertexMap.set(vertexString, vertexMapSize)
+						return vertexMapSize
+					}
+
+					this.vertexSet.add()
 				}
-				else {
-					let vertexMapSize = this.vertexMap.size + 1
-					this.vertexMap.set(vertexString, vertexMapSize)
-					return vertexMapSize
-				}
+			))
+		}
 
-				this.vertexSet.add()
+		let processJsonEvent = (JsonEvent) => {
+			if (jsonEvent.hasOwnProperty('vertices')) {
+				mergeVertices(jsonEvent)
 			}
-		))
+		}
+
+		if (this.writableObjectMode) {
+			jsonEvent = chunk
+			processJsonEvent(jsonEvent)
+		}
+		else {
+
+			if (Buffer.isBuffer(chunk))
+				chunk = chunk.toString()
+
+			this.internalBuffer = this.internalBuffer.concat(chunk.split('\n'))
+
+			let jsonEventString
+
+			while (jsonEventString = this.internalBuffer.shift()) {
+				jsonEvent = JSON.parse(jsonEventString)
+				processJsonEvent(jsonEvent)
+			}
+		}
 
 		done()
 	}
