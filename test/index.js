@@ -1,5 +1,6 @@
 import fs from 'fs'
 import path from 'path'
+import stream from 'stream'
 
 import Json2obj from '../source/index'
 import Yaml2json from '../source/yaml2json'
@@ -14,4 +15,6 @@ fs
 	.createReadStream(path.join(__dirname, 'tetrahedron.yaml'))
 	.pipe(yaml2json)
 	.pipe(json2obj)
-	.pipe(process.stdout)
+	.pipe(new stream.Writable({
+		write: (chunk, encoding, done) => done()
+	}))
