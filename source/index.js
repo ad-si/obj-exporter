@@ -25,8 +25,6 @@ export default class Json2obj extends stream.Transform {
 
 	_transform (chunk, encoding, done) {
 
-		var jsonEvent
-
 		let mergeVertices = (jsonEvent) => {
 
 			this.faceSet.add(jsonEvent.vertices.map(
@@ -48,16 +46,15 @@ export default class Json2obj extends stream.Transform {
 			))
 		}
 
-		let processJsonEvent = (JsonEvent) => {
+		let processJsonEvent = (jsonEvent) => {
 			if (jsonEvent.hasOwnProperty('vertices')) {
 				mergeVertices(jsonEvent)
 			}
 		}
 
-		if (this.writableObjectMode) {
-			jsonEvent = chunk
-			processJsonEvent(jsonEvent)
-		}
+		if (this._writableState.objectMode)
+			processJsonEvent(chunk)
+
 		else {
 
 			if (Buffer.isBuffer(chunk))
@@ -68,7 +65,7 @@ export default class Json2obj extends stream.Transform {
 			let jsonEventString
 
 			while (jsonEventString = this.internalBuffer.shift()) {
-				jsonEvent = JSON.parse(jsonEventString)
+				let jsonEvent = JSON.parse(jsonEventString)
 				processJsonEvent(jsonEvent)
 			}
 		}
