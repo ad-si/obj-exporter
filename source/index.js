@@ -23,34 +23,34 @@ export default class Json2obj extends stream.Transform {
 		this.faceSet = new Set
 	}
 
-	_transform (chunk, encoding, done) {
+	_mergeVertices (jsonEvent) {
 
-		let mergeVertices = (jsonEvent) => {
+		this.faceSet.add(jsonEvent.vertices.map(
+			vertex => {
 
-			this.faceSet.add(jsonEvent.vertices.map(
-				vertex => {
+				let vertexString = JSON.stringify(vertex)
 
-					let vertexString = JSON.stringify(vertex)
-
-					if (this.vertexMap.has(vertexString)) {
-						return this.vertexMap.get(vertexString)
-					}
-					else {
-						let vertexMapSize = this.vertexMap.size + 1
-						this.vertexMap.set(vertexString, vertexMapSize)
-						return vertexMapSize
-					}
-
-					this.vertexSet.add()
+				if (this.vertexMap.has(vertexString)) {
+					return this.vertexMap.get(vertexString)
 				}
-			))
-		}
+				else {
+					let vertexMapSize = this.vertexMap.size + 1
+					this.vertexMap.set(vertexString, vertexMapSize)
+					return vertexMapSize
+				}
 
-		let processJsonEvent = (jsonEvent) => {
-			if (jsonEvent.hasOwnProperty('vertices')) {
-				mergeVertices(jsonEvent)
+				this.vertexSet.add()
 			}
+		))
+	}
+
+	_processJsonEvent (jsonEvent) {
+		if (jsonEvent.hasOwnProperty('vertices')) {
+			this._mergeVertices(jsonEvent)
 		}
+	}
+
+	_transform (chunk, encoding, done) {
 
 		if (this._writableState.objectMode) {
 			console.assert(
@@ -58,7 +58,7 @@ export default class Json2obj extends stream.Transform {
 				'Chunk must be of type "object" ' +
 				'or writableObjectMode must be set to false'
 			)
-			processJsonEvent(chunk)
+			this._processJsonEvent(chunk)
 		}
 
 		else {
@@ -72,7 +72,7 @@ export default class Json2obj extends stream.Transform {
 
 			while (jsonEventString = this.internalBuffer.shift()) {
 				let jsonEvent = JSON.parse(jsonEventString)
-				processJsonEvent(jsonEvent)
+				this._processJsonEvent(jsonEvent)
 			}
 		}
 
