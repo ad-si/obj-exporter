@@ -1,6 +1,6 @@
 {
   "name": "obj-exporter",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Export face-vertex and polygon meshes to the OBJ format",
   "main": "build/index.js",
   "bin": "cli/index.js",
