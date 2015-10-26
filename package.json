@@ -8,6 +8,7 @@
     "test": "test"
   },
   "dependencies": {
+    "@adius/yaml2json": "^0.1.2",
     "buffer-converter": "^1.0.0",
     "js-yaml": "^3.4.3"
   },
