@@ -9,7 +9,7 @@ export default class Json2obj extends stream.Transform {
 	constructor (
 		{
 			writableObjectMode = true,
-			readableObjectMode = true
+			readableObjectMode = false
 		} = {}
 	) {
 		super({writableObjectMode, readableObjectMode})
@@ -52,8 +52,14 @@ export default class Json2obj extends stream.Transform {
 			}
 		}
 
-		if (this._writableState.objectMode)
+		if (this._writableState.objectMode) {
+			console.assert(
+				typeof chunk === 'object',
+				'Chunk must be of type "object" ' +
+				'or writableObjectMode must be set to false'
+			)
 			processJsonEvent(chunk)
+		}
 
 		else {
 
@@ -78,7 +84,6 @@ export default class Json2obj extends stream.Transform {
 		this.push('o Solid Object\n\n')
 
 		for (let vertexString of this.vertexMap.keys()) {
-			//console.log('hjkl',vertexString)
 			let vertex = JSON.parse(vertexString)
 			this.push(`v ${vertex.x} ${vertex.y} ${vertex.z}\n`)
 		}
