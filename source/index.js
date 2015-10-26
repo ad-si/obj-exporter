@@ -7,10 +7,10 @@ export function toObj () {
 export default class Json2obj extends stream.Transform {
 
 	constructor (
-		{writableObjectMode, readableObjectMode} = {
-			writableObjectMode: false,
-			readableObjectMode: true
-		}
+		{
+			writableObjectMode = true,
+			readableObjectMode = true
+		} = {}
 	) {
 		super({writableObjectMode, readableObjectMode})
 
