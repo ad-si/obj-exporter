@@ -38,8 +38,6 @@ export default class Json2obj extends stream.Transform {
 					this.vertexMap.set(vertexString, vertexMapSize)
 					return vertexMapSize
 				}
-
-				this.vertexSet.add()
 			}
 		))
 	}
