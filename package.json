@@ -1,24 +1,41 @@
 {
   "name": "obj-exporter",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Export face-vertex and polygon meshes to the OBJ format",
-  "main": "build/index.js",
-  "bin": "cli/index.js",
-  "directories": {
-    "test": "test"
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
   },
-  "dependencies": {
-    "@adius/yaml2json": "^0.1.2",
-    "buffer-converter": "^1.0.0",
-    "js-yaml": "^3.4.3"
+  "bin": {
+    "obj-exporter": "dist/cli.js"
   },
-  "devDependencies": {
-    "babel": "^5.8.23"
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
   },
   "scripts": {
-    "test": "babel-node test/index.js",
-    "build": "babel -d build source",
-    "prepublish": "npm test && npm run build"
+    "build": "tsc",
+    "test": "tsx --test test/index.ts",
+    "prepublishOnly": "npm test && npm run build"
+  },
+  "dependencies": {
+    "js-yaml": "^4.1.0"
+  },
+  "devDependencies": {
+    "@adius/yaml2json": "^0.1.2",
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^20.12.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.4.0"
   },
   "repository": {
     "type": "git",
@@ -26,7 +43,10 @@
   },
   "keywords": [
     "OBJ",
-    "mesh"
+    "mesh",
+    "3d",
+    "exporter",
+    "wavefront"
   ],
   "author": "Adrian Sieber",
   "license": "MIT",
